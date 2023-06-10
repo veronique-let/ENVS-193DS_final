@@ -1,0 +1,61 @@
+---
+title: "Final"
+author: "Veronique Letourneau & Victoria Yang"
+date: "2023-06-16"
+format:
+  html:
+    toc: true
+    toc-location: left
+    code-fold: true
+    theme: yeti
+editor: visual
+execute:
+  message: false
+  warning: false
+---
+
+# Problem 1
+
+#### Setting up
+
+```{r}
+library(here)
+library(tidyverse)
+library(utils)
+library(readr)
+
+```
+
+```{r}
+kratdata <- read_csv("data/knb-lter-sev.208.102459/sev208_kratseedbank_20120213.txt")
+```
+
+## Intro
+
+## Methods
+
+## Results
+
+# Problem 2
+
+#### Setting up
+
+```{r prob-2-data}
+# reading in community flower counts data
+comflowercount <- read_csv(here("data", "knb-lter-nwt.297.1", "shrubstudy_community_flower_counts.ms.data.csv"))
+
+# reading in individual flower counts data
+indflowercount <- read_csv(here("data", "knb-lter-nwt.297.1", "shrubstudy_individual_flower_counts.ms.data.csv"))
+
+# reading in pollinator counts data
+pollinators <- read_csv(here("data", "knb-lter-nwt.297.1", "shrubstudy_pollinator.ms.data.csv"))
+
+# reading in seed counts data
+seeds <- read_csv(here("data", "knb-lter-nwt.297.1", "shrubstudy_seed_ctwt.ms.data.csv"))
+```
+
+## Intro
+
+## Methods
+
+## Results
