@@ -23,11 +23,11 @@ library(here)
 library(tidyverse)
 library(utils)
 library(readr)
-
+library(janitor)
 ```
 
-```{r}
-kratdata <- read_csv("data/knb-lter-sev.208.102459/sev208_kratseedbank_20120213.txt")
+```{r prob-1-data}
+kratseed <- read.csv("~/github/ENVS-193DS_final/data/knb-lter-sev.208.102459/sev208_kratseedbank_20120213.txt")
 ```
 
 ## Intro
