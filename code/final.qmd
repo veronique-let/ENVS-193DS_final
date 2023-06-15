@@ -57,10 +57,10 @@ kratseed <- read.csv("~/github/ENVS-193DS_final/data/knb-lter-sev.208.102459/sev
   select(location, seed_count) %>% 
   # renaming locations
   mutate(location = case_when(
-    location == "B" ~ "Base of Mound", 
-    location == "D" ~ "Surrounding Mound",
-    location == "E" ~ "Edge of Mound",
-    location == "I" ~ "Inter Space of Mound"))
+    location == "B" ~ "Base", 
+    location == "D" ~ "Surrounding",
+    location == "E" ~ "Edge",
+    location == "I" ~ "Inter"))
 ```
 
 Visualizing missing data:
