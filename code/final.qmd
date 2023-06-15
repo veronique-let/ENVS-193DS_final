@@ -150,20 +150,43 @@ ggplot(data = kratseed, aes(x = location,y = seed_count)) +
 
 # Problem 2
 
-#### Setting up
+1.  Setting up:
 
 ```{r prob-2-data}
-# reading in community flower counts data
-comflowercount <- read_csv(here("data", "knb-lter-nwt.297.1", "shrubstudy_community_flower_counts.ms.data.csv"))
-
-# reading in individual flower counts data
-indflowercount <- read_csv(here("data", "knb-lter-nwt.297.1", "shrubstudy_individual_flower_counts.ms.data.csv"))
-
-# reading in pollinator counts data
-pollinators <- read_csv(here("data", "knb-lter-nwt.297.1", "shrubstudy_pollinator.ms.data.csv"))
 
 # reading in seed counts data
-seeds <- read_csv(here("data", "knb-lter-nwt.297.1", "shrubstudy_seed_ctwt.ms.data.csv"))
+seeds <- read_csv(here("data", "knb-lter-nwt.297.1", "shrubstudy_seed_ctwt.ms.data.csv")) %>%
+  
+  # select the columns of interest
+  select(treatment, species, total_nr_infl, nr_seeds) %>% 
+  
+  # change variable names to be more descriptive
+  mutate(treatment = case_when(
+    treatment == "control" ~ "open",
+    treatment == "shrub" ~ "shrub")) %>% 
+  
+  # rename columns for readability
+  rename("num_inflorescences" = total_nr_infl, "num_seeds" = nr_seeds)
+
+```
+
+2.  Visualize missing data:
+
+```{r}
+gg_miss_var(seeds)
+```
+
+**Figure 1.** Number of missing values from the seeds data frame.
+
+3.  Subsetting the data by dropping NAs:
+
+    Since I took this data set from online, I do not know why there are NA values so for the purpose of this analysis, I will exclude them.
+
+```{r}
+seeds_subset <- seeds %>% 
+  
+  # drops rows with NA values in the num_seeds column
+  drop_na(num_seeds) 
 ```
 
 ## Intro
