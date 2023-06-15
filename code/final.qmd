@@ -18,9 +18,9 @@ execute:
 
 ## Intro
 
-H0: There is no relationship between Kangaroo Rat Mound Location and total seed count.
+H~0~: There is no relationship between Kangaroo Rat Mound Location and total seed count.
 
-HA: There is a relationship between Kangaroo Rat Mound Location and total seed count.
+H~A~: There is a relationship between Kangaroo Rat Mound Location and total seed count.
 
 Significance level = 0.05
 
@@ -57,10 +57,10 @@ kratseed <- read.csv("~/github/ENVS-193DS_final/data/knb-lter-sev.208.102459/sev
   select(location, seed_count) %>% 
   # renaming locations
   mutate(location = case_when(
-    location == "B" ~ "Base_of_Mound", 
-    location == "D" ~ "Surrounding_Mound",
-    location == "E" ~ "Edge_of_Mound",
-    location == "I" ~ "Inter_Space_of_Mound"))
+    location == "B" ~ "Base of Mound", 
+    location == "D" ~ "Surrounding Mound",
+    location == "E" ~ "Edge of Mound",
+    location == "I" ~ "Inter Space of Mound"))
 ```
 
 Visualizing missing data:
@@ -120,7 +120,7 @@ The QQ plot shows that the sample distribution is not linear or normally spread.
 kruskal.test(seed_count ~ location, data = kratseed)
 ```
 
-From the Kruskal-Wallis test, we can conclude that there are significant differences between the treatment groups because the p-value is less than the significance value of 0.05 (p-value = 6.738e-05). Multiple pairwise comparisons between groups were conducted and we know there is a substantial difference between groups based on the Kruskal-Wallis test\'s results, but we don\'t know which pairings of groups are different. The function pairwise.wilcox.test() can be used to calculate pairwise comparisons between group levels with different testing corrections.
+From the Kruskal-Wallis test, we can conclude that there are significant differences between the treatment groups because the p-value is less than the significance value of 0.05 (p-value = 6.738e-05). Multiple pairwise comparisons between groups were conducted and we know there is a substantial difference between groups based on the Kruskal-Wallis test's results, but we don't know which pairings of groups are different. The function pairwise.wilcox.test() can be used to calculate pairwise comparisons between group levels with different testing corrections.
 
 ```{r prob1-pairwise-wilcox}
 # calculating pairwise comparisons between location
