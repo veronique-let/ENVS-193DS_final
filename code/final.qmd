@@ -150,7 +150,29 @@ ggplot(data = kratseed, aes(x = location,y = seed_count)) +
 
 # Problem 2
 
-1.  Setting up:
+1.  Read in packages
+
+```{r}
+# model packages
+library(MASS)
+library(lme4)
+library(glmmTMB)
+
+# diagnostics and model info
+library(DHARMa)
+library(MuMIn)
+library(ggeffects)
+library(lmtest)
+library(broom)
+
+# general usage
+library(tidyverse)
+library(skimr)
+library(GGally)
+library(flextable)
+
+salamanders <- read_csv(here("data", "salamanders.csv"))
+```
 
 ```{r prob-2-data}
 
@@ -202,93 +224,7 @@ seeds_subset %>%
   ggpairs()
 ```
 
-5.  Create null and full linear models:
-
-    We fit multiple linear regression models to determine how plot type, plant species, and the number of inflorescences predict seed count.
-
-```{r}
-# create a null model
-# totmass ~ 1 means there is no predictor
-null <- lm(num_seeds ~ 1, data = seeds_subset)
-
-# full model has all the predictor variables in it
-full <- lm(num_seeds ~ treatment + species + num_inflorescences, 
-           data = seeds_subset)
-```
-
-6.  Perform visual and statistical assumption tests to assess normality and homoscedasticity of residuals for the full model:
-
-    Diagnostic plots were used to visually assess assumptions. In addition, the Shapiro-Wilk test (null hypothesis: residuals are normally distributed) was used to assess normality and the Breusch-Pagan test (null hypothesis: residuals have constant variance) was used to assess homoskedasticity.
-
-```{r}
-# set up a 2x2 grid to display diagnostic plots
-par(mfrow = c(2,2))
-# plot diagnostic plot
-plot(full)
-
-# perform statistical assumption tests
-check_normality(full)
-check_heteroscedasticity(full)
-
-
-```
-
-7.  The residuals appear non-normal and heteroskedastic from the assumption tests so I will transform the variables and check if the transformed model fits the assumptions of a multiple linear regression.
-
-```{r}
-
-# replace values of 0 from the num_seeds column with 0.00001 so that I can log transformation the data
-seeds_subset["num_seeds"][seeds_subset["num_seeds"] == 0] <- 0.0001
-  
-# make null model for the log transformation
-null_sqrt <- lm(sqrt(num_seeds) ~ 1, data = seeds_subset)
-
-# make a log-transformed full model with all the predictors
-full_sqrt <- lm(sqrt(num_seeds) ~ treatment + species + num_inflorescences, data = seeds_subset)
-
-# check assumptions again
-plot(full_log)
-check_normality(full_log)
-check_heteroscedasticity(full_log)
-
-# still does not meet assumptions!!
-```
-
-8.  Fit additional models and check the assumptions to do a model comparison analysis:
-
--   Model 2: plot type as a predictor of seed count
-
-```{r}
-  
-model2_sqrt <- lm(sqrt(num_seeds) ~ treatment, data = seeds_subset)
-
-plot(model2_sqrt) # looks pretty good
-
-check_normality(model2_sqrt) # non-normal
-check_heteroscedasticity(model2_sqrt) # homoskedastic
-```
-
--   Model 3: species as a predictor of seed count
-
-```{r}
-model3_sqrt <- lm(sqrt(num_seeds) ~ species, data = seeds_subset)
-
-plot(model3_sqrt) # looks pretty good
-
-check_normality(model3_sqrt) # non-normal but doesn't look too bad
-check_heteroscedasticity(model3_sqrt) # heteroskedastic
-```
-
--   Model 4: number of inflorescences as a predictor of seed count
-
-```{r}
-model4_sqrt <- lm(log(num_seeds) ~ num_inflorescences, data = seeds_subset)
-
-plot(model4_sqrt) # looks pretty good
-
-check_normality(model4_sqrt) # non-normal
-check_heteroscedasticity(model4_sqrt) # heteroskedastic
-```
+5.  Create general
 
 ## Intro
 
