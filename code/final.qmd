@@ -170,9 +170,9 @@ library(tidyverse)
 library(skimr)
 library(GGally)
 library(flextable)
-
-salamanders <- read_csv(here("data", "salamanders.csv"))
 ```
+
+2.  Read in data
 
 ```{r prob-2-data}
 
@@ -180,7 +180,7 @@ salamanders <- read_csv(here("data", "salamanders.csv"))
 seeds <- read_csv(here("data", "knb-lter-nwt.297.1", "shrubstudy_seed_ctwt.ms.data.csv")) %>%
   
   # select the columns of interest
-  select(treatment, species, total_nr_infl, nr_seeds) %>% 
+  dplyr::select(treatment, species, total_nr_infl, nr_seeds) %>% 
   
   # change variable names to be more descriptive
   mutate(treatment = case_when(
@@ -192,7 +192,7 @@ seeds <- read_csv(here("data", "knb-lter-nwt.297.1", "shrubstudy_seed_ctwt.ms.da
 
 ```
 
-2.  Visualize missing data:
+3.  Visualize missing data:
 
 ```{r}
 gg_miss_var(seeds)
@@ -200,7 +200,7 @@ gg_miss_var(seeds)
 
 **Figure 1.** Number of missing values from the seeds data frame.
 
-3.  Subsetting the data by dropping NAs:
+4.  Subsetting the data by dropping NAs:
 
     Since I took this data set from online, I do not know why there are NA values so for the purpose of this analysis, I will exclude them.
 
@@ -211,20 +211,155 @@ seeds_subset <- seeds %>%
   drop_na(num_seeds) 
 ```
 
-4.  Create a pairs plot to visualize the relationships between variables:
+5.  Explore the data
+
+-   Create a pairs plot to visualize the relationships between variables:
 
 ```{r}
 
 seeds_subset %>% 
   
-  # include all columns
-  select(treatment:num_inflorescences) %>% 
+  # select variables to include in plot
+  dplyr::select(treatment:num_inflorescences) %>% 
   
   # create pairs plot
   ggpairs()
 ```
 
-5.  Create general
+-   Plot a histogram of seed counts
+
+```{r}
+ggplot(data = seeds_subset, aes(x = num_seeds)) +
+  geom_histogram(bins = round(2*nrow(seeds_subset)^(1/3)),
+                 fill="#45B39D", 
+                 color = "#e9ecef") +
+  labs(x = "Number of Seeds", y = "Count",
+       title = "Histogram of Number of Seeds")
+
+```
+
+6.  Build generalized linear models (GLM)
+
+    We are using a linear regression model because we are dealing with discrete (count) data.
+
+```{r}
+
+# GLM with all predictor variables (Poisson)
+model1 <- glm(num_seeds ~ treatment + species + num_inflorescences, data = seeds_subset, family = "poisson")
+
+# GLM with treatment as predictor variable (Poisson)
+model2 <- glm(num_seeds ~ treatment, data = seeds_subset, family = "poisson")
+
+# GLM with species as predictor variable (Poisson)
+model3 <- glm(num_seeds ~ species, data = seeds_subset, family = "poisson")
+
+# GLM with treatment and species as predictor variables (Poisson)
+model4 <- glm(num_seeds ~ treatment + species, data = seeds_subset, family = "poisson")
+
+# GLM with treatment and number of inflorescences as predictor variables (Poisson)
+model5 <- glm(num_seeds ~ treatment + num_inflorescences, data = seeds_subset, family = "poisson")
+
+# GLM with species and number of inflorescences as predictor variables (Poisson)
+model6 <- glm(num_seeds ~ treatment + num_inflorescences, data = seeds_subset, family = "poisson")
+
+# GLM with all predictor variables (negative binomial)
+model7 <- glm.nb(num_seeds ~ treatment + species + num_inflorescences, data = seeds_subset)
+
+# GLM with treatment as predictor variable (negative binomial)
+model8 <- glm.nb(num_seeds ~ treatment, data = seeds_subset)
+
+# GLM with species as predictor variable (negative binomial)
+model9 <- glm.nb(num_seeds ~ species, data = seeds_subset)
+
+# GLM with number of inflorescences as predictor variable (negative binomial)
+model10 <- glm.nb(num_seeds ~ num_inflorescences, data = seeds_subset)
+
+# GLM with treatment and species as predictor variables (negative binomial)
+model11 <- glm.nb(num_seeds ~ treatment + species, data = seeds_subset)
+
+# GLM with treatment and number of inflorescences as predictor variables (negative binomial)
+model12 <- glm.nb(num_seeds ~ treatment + num_inflorescences, data = seeds_subset)
+
+# GLM with species and number of inflorescences as predictor variables (negative binomial)
+model13 <- glm.nb(num_seeds ~ species + num_inflorescences, data = seeds_subset)
+
+```
+
+7.  Look at residuals to check assumptions
+
+```{r}
+
+# check diagnostics
+plot(simulateResiduals(model1)) # bad
+plot(simulateResiduals(model2)) # bad
+plot(simulateResiduals(model3)) # bad
+plot(simulateResiduals(model4)) # bad
+plot(simulateResiduals(model5)) # bad
+plot(simulateResiduals(model6)) # bad
+plot(simulateResiduals(model7)) # bad
+plot(simulateResiduals(model8)) # bad
+plot(simulateResiduals(model9)) # ok
+plot(simulateResiduals(model10)) # bad
+plot(simulateResiduals(model11)) # ok
+plot(simulateResiduals(model12)) # bad
+plot(simulateResiduals(model13)) # bad
+```
+
+8.  Model comparisons
+
+```{r}
+
+# Note for Sundeep: I chose these models to compare because model1 and model7 answers the question for problem 2 but not sure if these should be included because they don't meet assumptions of GLM..
+
+# Also, I included model9 and model11 because these meet the assumptions
+MuMIn::model.sel(model1, model7, model9, model11)
+
+# results: model7 has lowest AIC but since it doesn't meet assumptions, I would say we also look at model11? I will include both because model7 answers the question for prob 2 and model11 meets assumptions
+```
+
+9.  Model summary for model 7 and model 11
+
+```{r}
+# model summaries
+summary(model7)
+summary(model11)
+
+# confidence intervals
+confint(model7)
+confint(model11)
+
+# adjusted R2 values
+r.squaredGLMM(model7)
+r.squaredGLMM(model11)
+
+# report model object results in table
+table <- tidy(model7, conf.int = TRUE) %>% 
+  
+  # change the estimates, standard error, t-stats to round to 2 digits
+  mutate(across(estimate:conf.high, ~ round(.x, digits = 2))) %>% 
+  
+  # replace the small p values with < 0.001
+  mutate(p.value = case_when(p.value < 0.001 ~ "< 0.001")) %>% 
+  
+  # make it into flex table
+  flextable() %>% 
+  
+  # change header labels
+  set_header_labels(std.error = "standard error", 
+                    statistic = "F-statistic",
+                    p.value = "p-value",
+                    conf.low = "low confidence interval",
+                    conf.high = "high confidence interval")
+
+  # fit it to the viewer
+  autofit(table)
+```
+
+10. Model visualization for model 7 and model 11
+
+```{r}
+
+```
 
 ## Intro
 
