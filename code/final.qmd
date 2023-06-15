@@ -42,6 +42,7 @@ library(ggplot2)
 library(performance)
 library(effsize)
 library(rstatix)
+library(GGally)
 ```
 
 Initial data wangling:
@@ -191,7 +192,7 @@ seeds_subset <- seeds %>%
 
 4.  Create a pairs plot to visualize the relationships between variables:
 
-```{r}
+```{r pairs-plot}
 
 seeds_subset %>% 
   
@@ -199,7 +200,7 @@ seeds_subset %>%
   select(treatment:num_inflorescences) %>% 
   
   # create pairs plot
-  ggpairs()
+  GGally::ggpairs()
 ```
 
 5.  Create null and full linear models:
