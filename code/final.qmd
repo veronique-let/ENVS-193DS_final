@@ -26,7 +26,6 @@ Significance level = 0.05
 
 ## Methods
 
-## Results
 
 #### Setting up
 
@@ -42,6 +41,7 @@ library(ggplot2)
 library(performance)
 library(effsize)
 library(rstatix)
+library(GGally)
 ```
 
 Initial data wangling:
@@ -57,10 +57,10 @@ kratseed <- read.csv("~/github/ENVS-193DS_final/data/knb-lter-sev.208.102459/sev
   select(location, seed_count) %>% 
   # renaming locations
   mutate(location = case_when(
-    location == "B" ~ "Base of Mound", 
-    location == "D" ~ "Surrounding Mound",
-    location == "E" ~ "Edge of Mound",
-    location == "I" ~ "Inter Space of Mound"))
+    location == "B" ~ "Base", 
+    location == "D" ~ "Surrounding",
+    location == "E" ~ "Edge",
+    location == "I" ~ "Inter"))
 ```
 
 Visualizing missing data:
@@ -148,6 +148,11 @@ ggplot(data = kratseed, aes(x = location,y = seed_count)) +
   text = element_text(family = "Times New Roman")
 ```
 
+## Results
+We analyzed the difference between seed count at different kangroo rat mounds at the Sevilleta National Wildlife Refuge in New Mexico. The null hypothesis stated that there is no relationship between seed count and the location of kangaroo rat mounds, while the alternative hypothesis stated that there is a relationship between these two variables. 
+
+Our analysis using a Kruskal-Wallis test and Pairwise Wilcox test showed that there is a relationship between seed count and location. The pairwise Wilcox test showed that there are significant differences between the number of seeds found at the base, edge, inter-space locations. The p-values we calculated were < 0.01, which is less than the significance level of 0.05. So, we reject the null hypothesis. 
+
 # Problem 2
 
 1.  Read in packages
@@ -213,7 +218,7 @@ seeds_subset <- seeds %>%
 
 4.  Create a pairs plot to visualize the relationships between variables:
 
-```{r}
+```{r pairs-plot}
 
 seeds_subset %>% 
   
@@ -221,10 +226,11 @@ seeds_subset %>%
   select(treatment:num_inflorescences) %>% 
   
   # create pairs plot
-  ggpairs()
+  GGally::ggpairs()
 ```
 
 5.  Create general
+
 
 ## Intro
 
