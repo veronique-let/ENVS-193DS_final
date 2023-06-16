@@ -206,7 +206,11 @@ Biologically, this means that kangaroo rat mounds have more seeds than the space
 
 ## Intro
 
-Shrubification is the expansion of woody shrubs in the Arctic tundra [@seaver2022]. Shrubification is important to study because it leads to a shift in the carbon balance in the Arctic, which can cause a change in plant composition [@mekonnen2021].
+Shrubification is the expansion of woody shrubs in the Arctic tundra [@seaver2022]. Shrubification is important to study because it leads to a shift in the carbon balance in the Arctic, which can cause a change in plant composition [@mekonnen2021]. These shrubs change the microclimate as well, altering surface albedo, soil temperature, and permafrost stability [@aartsma2021]. Because shrubification changes the local environment, it can affect the flowering phenology of plants [@seaver2022]. Our analysis is to determine how seed count varies with plot type, plant species, and total number of plant inflorescences.
+
+H~0~: There is no relationship between shrubification, species, seed count, and number of inflorescences.
+
+H~A~: There is a relationship between shrubification, species, seed count, and number of inflorescences.
 
 ## Methods
 
