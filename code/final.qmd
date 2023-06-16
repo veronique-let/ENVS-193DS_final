@@ -18,12 +18,6 @@ execute:
 
 ## Intro
 
-H~0~: There is no relationship between Kangaroo Rat Mound Location and total seed count.
-
-H~A~: There is a relationship between Kangaroo Rat Mound Location and total seed count.
-
-Significance level = 0.05
-
 ## Methods
 
 ## Results
@@ -191,6 +185,12 @@ ggplot(data = totalseedcount, aes(x = location, y = seed_count, fill = location)
 ```
 
 # Problem 2
+
+## Intro
+
+## Methods
+
+## Results
 
 1.  Read in packages
 
@@ -393,11 +393,33 @@ table <- tidy(model7, conf.int = TRUE) %>%
 10. Model visualization for model 7 and model 11
 
 ```{r}
+# visualization for model 7
+ggplot(data = model7, aes(x = species, y = num_seeds, fill = treatment)) +
+  geom_point(aes(color = treatment)) +
+  facet_wrap(~species, scales = "free_y") +
+  labs(x = "Species", 
+       y = "Seed Count", 
+       title = "Number of Seeds vs Plant Species and Plot Type 
+       (Open or Shrub)") +
+  theme_gray() +
+  theme(
+        # font, position, and sizes of labels
+        axis.text = element_text(size = 7), 
+        axis.title = element_text(size = 9),
+        plot.title = element_text(size = 12, hjust = 0.5),
+        plot.caption = element_text(size = 7, hjust = 0.5))
 
+# visualization for model 11
+ggplot(data = model11, aes(x = species, y = num_seeds, fill = treatment)) +
+  geom_boxplot() +
+  labs(x = "Species", 
+       y = "Seed Count", 
+       title = "Number of Seeds vs Plant Species and Plot Type (Open or Shrub)") +
+  theme_gray() +
+  theme(
+        # font, position, and sizes of labels
+        axis.title = element_text(size = 9),
+        plot.title = element_text(size = 12, hjust = 0.5),
+        plot.caption = element_text(size = 7, hjust = 0.5))
 ```
 
-## Intro
-
-## Methods
-
-## Results
