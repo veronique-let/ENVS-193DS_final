@@ -20,7 +20,7 @@ link-citations: true
 
 ## Intro
 
-The banner-tailed kangaroo rat, *Dipodomys spectabilis*, makes large mounds that can be inhabited for years [@schroder1975] These mounds play an important role in their ecosystem that potentially promotes plant species diversity [@guo1996] Kangaroo rats are considered a keystone species because of the effects they have on the plant community in their habitat [@heske1993] So, studying the link between plants and these mounds can be important to understanding the way in which plants grow in this habitat. The purpose of this analysis is to identify whether or not there is a relationship between seed count and location on kangaroo rat mounds.
+The banner-tailed kangaroo rat, *Dipodomys spectabilis*, makes large mounds that can be inhabited for years [@schroder1975]. These mounds play an important role in their ecosystem that potentially promotes plant species diversity [@guo1996]. Kangaroo rats are considered a keystone species because of the effects they have on the plant community in their habitat [@heske1993]. So, studying the link between plants and these mounds can be important to understanding the way in which plants grow in this habitat. The purpose of this analysis is to identify whether or not there is a relationship between seed count and location on kangaroo rat mounds.
 
 H~0~: There is no relationship between Kangaroo Rat Mound Location and total seed count.
 
@@ -29,8 +29,6 @@ H~A~: There is a relationship between Kangaroo Rat Mound Location and total seed
 Significance level = 0.05
 
 ## Methods
-
-## Results
 
 #### Setting up
 
@@ -194,13 +192,23 @@ ggplot(data = totalseedcount, aes(x = location, y = seed_count, fill = location)
         plot.caption = element_text(size = 7, hjust = 0.5))
 ```
 
+## Results
+
+We analyzed the difference between seed count at different kangaroo rat mounds at the Sevilleta National Wildlife Refuge in New Mexico. The null hypothesis stated that there is no relationship between seed count and the location of kangaroo rat mounds, while the alternative hypothesis stated that there is a relationship between these two variables. 
+
+Our analysis using a Kruskal-Wallis test and Pairwise Wilcox test showed that there is a relationship between seed count and location. The pairwise Wilcox test showed that there is a significant difference in the number of seeds found at the base and surrounding areas of the mound when compared to inter-space locations. The p-values we calculated from the Pairwise Wilcox test were 0.0018 for the base of the mound and 0.0453 for the surrounding areas, which are both less than the significance level of 0.05. So, we reject the null hypothesis.
+
+Biologically, this means that kangaroo rat mounds have more seeds than the space between them, which indicates that there is a link between kangaroo rats and seed dispersal.
+
+\
+
 # Problem 2
 
 ## Intro
 
-## Methods
+Shrubification is the expansion of woody shrubs in the Arctic tundra [@seaver2022]. Shrubification is important to study because it leads to a shift in the carbon balance in the Arctic, which can cause a change in plant composition [@mekonnen2021].
 
-## Results
+## Methods
 
 1.  Read in packages
 
@@ -432,3 +440,5 @@ ggplot(data = model11, aes(x = species, y = num_seeds, fill = treatment)) +
         plot.title = element_text(size = 12, hjust = 0.5),
         plot.caption = element_text(size = 7, hjust = 0.5))
 ```
+
+## Results
