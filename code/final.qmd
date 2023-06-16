@@ -119,35 +119,74 @@ shapiro.test(seed_data$seed_count)
 
 The QQ plot shows that the sample distribution is not linear or normally spread. The histogram visualization shows that the distribution of the seed count data is not normally distributed. And the Shapiro-Wilk test (p-value = 2.2e-16) shows that the data deviates from a normal distribution as well (p-value \< 0.05). Therefore, a non-parametric alternative to a one-way ANOVA (Kruskal-Wallis test) is performed to compare the seed counts between rat mound locations.
 
-```{r}
-kruskal.test(seed_count ~ location, data = seed_data)
+Kruskal-Wallis Test and table:
+
+```{r kruskal-wallis-test}
+# creating a new object for the Kruskal-Wallis Test
+kruskal_test <- kruskal.test(seed_count ~ location, data = seed_data)
+
+# creating a readable table of the test results
+kruskal_test_table <- tidy(kruskal_test) %>% 
+  mutate(statistic = round(statistic, digits = 3)) %>% 
+  mutate(p.value = round(p.value, digits = 4)) %>% 
+  flextable() %>% 
+  autofit()
+kruskal_test_table
 ```
 
-From the Kruskal-Wallis test, we can conclude that there are significant differences between the treatment groups because the p-value is less than the significance value of 0.05 (p-value = 0.002365). Multiple pairwise comparisons between groups were conducted and we know there is a substantial difference between groups based on the Kruskal-Wallis test's results, but we don't know which pairings of groups are different. The function pairwise.wilcox.test() can be used to calculate pairwise comparisons between group levels with different testing corrections.
+From the Kruskal-Wallis test, we can conclude that there are significant differences between the treatment groups because the p-value is less than the significance value of 0.05 (p-value = 0.0024). Multiple pairwise comparisons between groups were conducted and we know there is a substantial difference between groups based on the Kruskal-Wallis test's results, but we don't know which pairings of groups are different. The function pairwise.wilcox.test() can be used to calculate pairwise comparisons between group levels with different testing corrections.
+
+Pairwise-Wilcox Test and table:
 
 ```{r prob1-pairwise-wilcox}
-# calculating pairwise comparisons between location
-pairwise.wilcox.test(seed_data$seed_count, seed_data$location)
+# running poct hoc test to calculate pairwise comparisons between locations using `pairwise.wilcox.test`
+pairwise_test <- pairwise.wilcox.test(seed_data$seed_count, seed_data$location)
+
+# creating a readable table of the test results
+wilcox_table <- tidy(pairwise_test) %>% 
+#clean up table
+  mutate(p.value = round(p.value, digits = 4)) %>% 
+  flextable() %>% 
+  autofit()
+wilcox_table
 ```
 
-The results of the Pairwise Wilcox Test show that not all of the mound locations significantly differ in seed counts, but that the Inter-Space of the mound has a significant difference in seed count between the Base of the mound (p.value = 0.0018), and the Surrounding of the mound (p.value = 0.0453) but has does not show a significant difference in seed counts with the Edge of the mounds (p.value = 0.0551). 
+The results of the Pairwise Wilcox Test show that not all of the mound locations significantly differ in seed counts, but that the Inter-Space of the mound has a significant difference in seed count between the Base of the mound (p.value = 0.0018), and the Surrounding of the mound (p.value = 0.0453) but has does not show a significant difference in seed counts with the Edge of the mounds (p.value = 0.0551).
 
 Final Visualization of total seed count by Kangaroo Rat mound location:
 
-```{r prob1-final-vis}
-# visualization of total seed count by mound location
-ggplot(data = seed_data, aes(x = location,y = seed_count)) +
-# adding colors for mound locations
-  geom_bar(stat = "identity", aes(fill = location)) +
-  # change legend title
-  scale_fill_discrete(name = "Mound Location") +
+```{r}
+# creating a new object for the sum of seed counts per location
+totalseedcount <- aggregate(data = seed_data, seed_count ~ location, FUN = sum)
+totalseedcount
+
+
+# creating a figure of the total seed count data
+ggplot(data = totalseedcount, aes(x = location, y = seed_count, fill = location)) +
+  # creating a column figure
+  geom_col() +
+  # adding labels
+  labs(x = "Kangaroo Rat Mound Locations", 
+       y = "Total Seed Count",  
+       caption = "Total of seed counts per Kangaroo rat mound locations.
+       Data source: Koontz and Simpson (2010), The composition of seed banks 
+       on kangaroo rat (Dipodomys spectabilis) mounds in a Chihuahuan Desert grassland", 
+       title = "Total Seed Count for Each Kangaroo Rat Mound Locations",        color = "location") +
   theme_classic() +
-  labs (x = "Mound Location", 
-        y = "Total Seed Count", 
-        title = "Total Seed Count by Kangaroo Rat Mound Location",
-        caption = "Visualization of the total seed count in all four Kangaroo rat mound locations.") +
-  theme(plot.title = element_text(size = 12, hjust = 0.5)) +
-  theme(plot.caption = element_text(size = 7, hjust=0.5))
+  # choosing different colors for each location
+  scale_fill_manual(values = c("lightgreen", "lightpink", "lightgrey", "lightblue")) +
+  # adjusting/edits
+  theme(
+        legend.position = c(0.85, 0.7),
+        legend.text = element_text(size = 11),
+        legend.title = element_text(size = 11),
+        # clear background
+        panel.grid = element_blank(), 
+        # font, position, and sizes of lables
+        axis.text = element_text(size = 7), 
+        axis.title = element_text(size = 9),
+        plot.title = element_text(size = 12, hjust = 0.5),
+        plot.caption = element_text(size = 7, hjust = 0.5))
 ```
 
 # Problem 2
