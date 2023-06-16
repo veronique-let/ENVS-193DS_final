@@ -12,11 +12,21 @@ editor: visual
 execute:
   message: false
   warning: false
+bibliography: references.bib
+link-citations: true
 ---
 
 # Problem 1
 
 ## Intro
+
+The banner-tailed kangaroo rat, *Dipodomys spectabilis*, makes large mounds that can be inhabited for years [@schroder1975] These mounds play an important role in their ecosystem that potentially promotes plant species diversity [@guo1996] Kangaroo rats are considered a keystone species because of the effects they have on the plant community in their habitat [@heske1993] So, studying the link between plants and these mounds can be important to understanding the way in which plants grow in this habitat. The purpose of this analysis is to identify whether or not there is a relationship between seed count and location on kangaroo rat mounds.
+
+H~0~: There is no relationship between Kangaroo Rat Mound Location and total seed count.
+
+H~A~: There is a relationship between Kangaroo Rat Mound Location and total seed count.
+
+Significance level = 0.05
 
 ## Methods
 
@@ -39,7 +49,7 @@ library(rstatix)
 library(flextable)
 ```
 
-Initial data wangling:
+Initial data wrangling:
 
 ```{r prob-1-data}
   # reading in the data
@@ -422,4 +432,3 @@ ggplot(data = model11, aes(x = species, y = num_seeds, fill = treatment)) +
         plot.title = element_text(size = 12, hjust = 0.5),
         plot.caption = element_text(size = 7, hjust = 0.5))
 ```
-
