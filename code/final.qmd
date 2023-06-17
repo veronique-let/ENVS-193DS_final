@@ -30,7 +30,17 @@ Significance level = 0.05
 
 ## Methods
 
-#### Setting up
+The initial data wrangling process involved reading in the dataset and performing several cleaning steps. The dataset was read using the read.csv() function from the readr package. The resulting data was stored in the kratseed object. To clean the data, we excluded rows with microhabitat composition data (species: "soil", "dist", "gravel", "litter", "plant") from the seed_data object using the negation operator (!) and the %in% function. And made the column names cleaner using the clean_names() function from the janitor package.
+
+We then checked for missing data in the dataset with a visualization using the gg_miss_var() function from the naniar package. The resulting visualization showed no missing data for mound locations or seed counts.
+
+Checking sssumptions normality and independence with histograms and QQ plots was the next step before performing our statistical test. The histogram was created using the geom_histogram() function from the ggplot2 package. It displayed the distribution of the seed count variable, with the x-axis representing the seed count and the y-axis representing the count of observations.
+
+The QQ plot was created using the stat_qq() function from the ggplot2 package. It displayed the quantiles of the seed count variable against the quantiles of a theoretical normal distribution. The stat_qq_line() function was used to add a line representing the expected distribution if the data were normally distributed. The QQ plot was faceted by location to visualize the distribution for each mound location.
+
+The Kruskal-Wallis test and Wilcox Pairwise post hoc test were chosen for this particular dataframe to assess the significance of the relationship, the null hypothesis (H0) stated that there is no relationship between Kangaroo Rat Mound Location and total seed count. The alternative hypothesis (HA) stated that there is a relationship between Kangaroo Rat Mound Location and total seed count. The significance level was set at 0.05.
+
+1.  Read in packages
 
 ```{r}
 library(here)
@@ -47,7 +57,7 @@ library(rstatix)
 library(flextable)
 ```
 
-Initial data wrangling:
+2.  Initial data wrangling:
 
 ```{r prob-1-data}
   # reading in the data
@@ -69,7 +79,7 @@ kratseed <- read.csv("~/github/ENVS-193DS_final/data/knb-lter-sev.208.102459/sev
     location == "I" ~ "Inter_Space"))
 ```
 
-Visualizing missing data:
+3.  Visualizing missing data:
 
 ```{r prob1-missing-data}
 # visualizing missing data
@@ -80,7 +90,7 @@ labs(title = "Missing Data Visualization of Mound Locations and Seed Count",
   theme(plot.caption = element_text(size = 9, hjust=0.5))
 ```
 
-Exploratory Visualization:
+4.  Exploratory Visualization:
 
 ```{r prob1-exp-vis}
 # plotting an exploratory visualization 
@@ -94,7 +104,7 @@ ggplot(data = seed_data, aes(x = location, y = seed_count)) +
   theme(plot.caption = element_text(size = 8, hjust=0.5))
 ```
 
-Visually checking for normality of variables and distribution with a histogram and QQ Plot:
+5.  Visually checking for normality of variables and distribution with a histogram and QQ Plot:
 
 ```{r prob1-histogram}
 # checking histogram for independence of variables and spread
@@ -113,7 +123,7 @@ ggplot(data = seed_data) +
   facet_wrap(~ location)
 ```
 
-Using the Shapiro Wilk test to check for normal distribution:
+6.  Using the Shapiro Wilk test to check for normal distribution:
 
 ```{r prob1-shapiro}
 # The p-value of the Shapiro-Wilk Test is greater than 0.05. Meaning the data significantly deviates from a normal distribution.
@@ -122,7 +132,7 @@ shapiro.test(seed_data$seed_count)
 
 The QQ plot shows that the sample distribution is not linear or normally spread. The histogram visualization shows that the distribution of the seed count data is not normally distributed. And the Shapiro-Wilk test (p-value = 2.2e-16) shows that the data deviates from a normal distribution as well (p-value \< 0.05). Therefore, a non-parametric alternative to a one-way ANOVA (Kruskal-Wallis test) is performed to compare the seed counts between rat mound locations.
 
-Kruskal-Wallis Test and table:
+7.  Kruskal-Wallis Test and table:
 
 ```{r}
 # creating a new object for the Kruskal-Wallis Test
@@ -139,7 +149,7 @@ kruskal_test_table
 
 From the Kruskal-Wallis test, we can conclude that there are significant differences between the treatment groups because the p-value is less than the significance value of 0.05 (p-value = 0.0024). Multiple pairwise comparisons between groups were conducted and we know there is a substantial difference between groups based on the Kruskal-Wallis test's results, but we don't know which pairings of groups are different. The function pairwise.wilcox.test() can be used to calculate pairwise comparisons between group levels with different testing corrections.
 
-Pairwise-Wilcox Test and table:
+8.  Pairwise-Wilcox Test and table:
 
 ```{r}
 # running poct hoc test to calculate pairwise comparisons between locations using `pairwise.wilcox.test`
@@ -213,6 +223,12 @@ H~A~: There is a relationship between treatment, species, seed count, and number
 Significance level: 0.05
 
 ## Methods
+
+The data cleaning and wrangling process involved excluding rows with missing microhabitat composition data and renaming columns for clarity. The missing data was visualized to assess the presence of missing values, which showed no missing values for mound locations or seed counts. To explore the data, a pairs plot was created to visualize the relationships between variables. A histogram of seed counts was also plotted to examine the distribution. For the statistical analysis, generalized linear models (GLMs) were built to investigate the relationship between seed count and the predictors of treatment, species, and number of inflorescences. Several GLM models were constructed, including models with different combinations of predictors and using either Poisson or negative binomial family distributions.
+
+Assumption checks were performed on the models by examining the residuals. Models that did not meet the assumptions were excluded from further analysis, and the models that met the assumptions were compared using the Akaike Information Criterion (AIC) to determine the best model (model 11). Model summaries, confidence intervals, and adjusted R-squared values were calculated for this model. The results were reported using tables, with estimates, standard errors, t-stats, and p-values rounded to two digits.
+
+To assess the significance of the relationship, the null hypothesis (H0) stated that there is no relationship between treatment, species, seed count, and the number of inflorescences. The alternative hypothesis (HA) stated that there is a relationship between these variables. The significance level was set at 0.05.
 
 1.  Read in packages
 
@@ -349,45 +365,60 @@ model13 <- glm.nb(num_seeds ~ species + num_inflorescences, data = seeds_subset)
 ```{r model1, include=FALSE}
 plot(simulateResiduals(model1)) # bad
 ```
+
 ```{r model2, include=FALSE}
 plot(simulateResiduals(model2)) # bad
 ```
+
 ```{r model3, include=FALSE}
 plot(simulateResiduals(model3)) # bad
 ```
+
 ```{r model4, include=FALSE}
 plot(simulateResiduals(model4)) # bad
 ```
+
 ```{r model5, include=FALSE}
 plot(simulateResiduals(model5)) # bad
 ```
+
 ```{r model6, include=FALSE}
 plot(simulateResiduals(model6)) # bad
 ```
+
 ```{r model7, include=FALSE}
 plot(simulateResiduals(model7)) # bad
 ```
+
 ```{r model8, include=FALSE}
 plot(simulateResiduals(model8)) # bad
 ```
+
 Model9
+
 ```{r model9}
 plot(simulateResiduals(model9)) # ok
 ```
+
 ```{r model10, include=FALSE}
 plot(simulateResiduals(model10)) # bad
 ```
+
 Model11
+
 ```{r model11}
 plot(simulateResiduals(model11)) # ok
 ```
+
 ```{r model12, include=FALSE}
 plot(simulateResiduals(model12)) # bad
 ```
+
 ```{r model13, include=FALSE}
 plot(simulateResiduals(model13)) # bad
 ```
-These are the only two models that met the GLM assumptions. 
+
+These are the only two models that met the GLM assumptions.
 
 9.  Model comparisons
 
@@ -436,7 +467,7 @@ table <- tidy(model11, conf.int = TRUE) %>%
 
 ## Results
 
-We determined that the model that used treatment and species as predictor variables was the best for this analysis. This model was chosen because it has the lowest AIC of the models that meet the assumptions of GLM. A low AIC indicates that this is the simplest explanation for the relationship. The results of our analysis showed that seed count was significantly related to the species CARRUP, GEUROS, MINOBT, and KOBMYO since the p-values for those were less than the significance level of 0.05. Species TRIDAS can be excluded from this analysis because there are significant missing seed count data for that specific species.
+Neither of the models that included all predictors satisfied assumptions, therefore, we used a simpler model. We determined that the model that used treatment and species as predictor variables was the best for this analysis. This model was chosen because it has the lowest AIC of the models that meet the assumptions of GLM. A low AIC indicates that this is the simplest explanation for the relationship. The results of our analysis showed that seed count was significantly related to the species CARRUP, GEUROS, MINOBT, and KOBMYO since the p-values for those were less than the significance level of 0.05. Species TRIDAS can be excluded from this analysis because there are significant missing seed count data for that specific species.
 
 So, we can reject the null hypothesis because there is a statistical significant relationship between at least two variables. Biologically, this means that there is a relationship between species and seed count.
 
